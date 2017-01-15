@@ -1,5 +1,3 @@
-var APP_ID = null; //replace this with your app ID to make use of APP_ID verification
-
 var AlexaSkill = require("./AlexaSkill");
 var serverinfo = require("./serverinfo");
 var http = require("http");
@@ -9,7 +7,7 @@ if (serverinfo.host == "127.0.0.1") {
 }
 
 var AlexaRoku = function () {
-    AlexaSkill.call(this, APP_ID);
+    AlexaSkill.call(this, serverinfo.skillId);
 };
 
 AlexaRoku.prototype = Object.create(AlexaSkill.prototype);
@@ -90,6 +88,11 @@ AlexaRoku.prototype.intentHandlers = {
 		sendCommand("/roku/hulu",null,function() {
 			response.tellWithCard("Launching Hulu");
 		});
+    },
+    Netflix: function(intent, session, response) {
+    sendCommand("/roku/netflix",null,function() {
+      response.tellWithCard("Launching Netflix");
+    });
     },
     PlexTest: function (intent, session, response) {
 		sendCommand("/roku/plextest",null,function() {

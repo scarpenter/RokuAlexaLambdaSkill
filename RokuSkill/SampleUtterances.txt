@@ -10,6 +10,12 @@ Amazon open amazon
 Amazon start amazon
 Amazon go to amazon
 
+Netflix netflix
+Netflix set to netflix
+Netflix open netflix
+Netflix start netflix
+Netflix go to netflix
+
 PlexTest plextest
 PlexTest set to plextest
 PlexTest open plextest

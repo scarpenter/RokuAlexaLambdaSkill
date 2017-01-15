@@ -2,13 +2,14 @@ var http = require('http');
 var fs = require('fs');
 var urllib = require("url");
 var Client = require('node-ssdp').Client;
-var dgram = require('dgram'); 
+var dgram = require('dgram');
+var serverinfo = require("./serverinfo");
 
 //null will cause the server to discover the Roku on startup, hard coding a value will allow for faster startups
 // When manually setting this, include the protocol, port, and trailing slash eg:
 // var rokuAddress = "http://192.168.1.100:8060/";
-var rokuAddress = null;
-var PORT=1234;
+var rokuAddress = serverinfo.rokuAddress;
+var port=serverinfo.port;
 
 var ssdp = new Client();
 
@@ -219,6 +220,14 @@ var handlers = {
             });
             response.end("OK");
         },
+				"/roku/netflix":function(request,response) {
+					postSequence([
+						netflix(rokuAddress),
+					],function() {
+
+					});
+					response.end("OK");
+				},
 		"/roku/plextest":function(request,response) {
             postSequence([
                 plextest(rokuAddress),
@@ -339,6 +348,9 @@ function hulu(address){
     return address+"launch/2285";
 }
 
+function netflix(address) {
+	return address+"launch/12"
+}
 // Launches the Plex channel (id 13535)
 function plex(address){
     return address+"launch/13535";
@@ -395,6 +407,6 @@ setInterval(searchForRoku,1000);
 searchForRoku();
 
 //start the tcp server
-http.createServer(handleRequest).listen(PORT,function(){
-    console.log("Server listening on port: %s", PORT);
+http.createServer(handleRequest).listen(port,function(){
+    console.log("Server listening on port: %s", port);
 });

@@ -87,6 +87,10 @@
       ]
     },
     {
+      "intent": "Netflix",
+      "slots": []
+    },
+    {
       "intent": "HelpIntent",
       "slots": []
     }

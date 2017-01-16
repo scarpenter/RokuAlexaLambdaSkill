@@ -1,6 +1,6 @@
 var AlexaSkill = require("./AlexaSkill");
 var serverinfo = require("./serverinfo");
-var http = require("http");
+var https = require("https");
 
 if (serverinfo.host == "127.0.0.1") {
     throw "Default hostname found, edit your serverinfo.js file to include your server's external IP address";
@@ -21,7 +21,7 @@ function sendCommand(path,body,callback) {
         method: 'POST',
     };
 
-    var req = http.request(opt, function(res) {
+    var req = https.request(opt, function(res) {
 		callback();
         res.setEncoding('utf8');
         res.on('data', function (chunk) {

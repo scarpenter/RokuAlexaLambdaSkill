@@ -407,6 +407,7 @@ setInterval(searchForRoku,1000);
 searchForRoku();
 
 //start the tcp server
-http.createServer(handleRequest).listen(port,function(){
-    console.log("Server listening on port: %s", port);
+http.createServer(handleRequest).listen("/tmp/node_roku.sock",function(){
+    fs.chmodSync("/tmp/node_roku.sock", "777");
+    console.log("Server listening");
 });

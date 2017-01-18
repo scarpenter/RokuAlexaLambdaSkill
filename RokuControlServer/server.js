@@ -3,6 +3,7 @@ var fs = require('fs');
 var urllib = require("url");
 var Client = require('node-ssdp').Client;
 var dgram = require('dgram');
+var auth = require('basic-auth');
 var serverinfo = require("./serverinfo");
 
 //null will cause the server to discover the Roku on startup, hard coding a value will allow for faster startups
@@ -326,6 +327,12 @@ var handlers = {
 
 //handles and incoming request by calling the appropriate handler based on the URL
 function handleRequest(request, response){
+	var credentials = auth(request);
+	if (!credentials || credentials.name !== "lambda" || credentials.password !== serverinfo.password) {
+		console.log("Invalid authorization: " + JSON.stringify(credentials));
+		response.end();
+		return;
+	}
 	if (handlers[request.url]) {
 		handlers[request.url](request,response);
 	} else {

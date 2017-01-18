@@ -19,6 +19,7 @@ function sendCommand(path,body,callback) {
 		port:serverinfo.port,
         path: path,
         method: 'POST',
+        auth: "lambda:" + serverinfo.password
     };
 
     var req = https.request(opt, function(res) {

@@ -328,7 +328,7 @@ var handlers = {
 //handles and incoming request by calling the appropriate handler based on the URL
 function handleRequest(request, response){
 	var credentials = auth(request);
-	if (!credentials || credentials.name !== "lambda" || credentials.password !== serverinfo.password) {
+	if (!credentials || credentials.name !== "lambda" || credentials.pass !== serverinfo.password) {
 		console.log("Invalid authorization: " + JSON.stringify(credentials));
 		response.end();
 		return;

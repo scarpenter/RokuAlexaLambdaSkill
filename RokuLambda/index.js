@@ -1,6 +1,6 @@
 var AlexaSkill = require("./AlexaSkill");
 var serverinfo = require("./serverinfo");
-var http = require("http");
+var https = require("https");
 
 if (serverinfo.host == "127.0.0.1") {
     throw "Default hostname found, edit your serverinfo.js file to include your server's external IP address";
@@ -19,10 +19,10 @@ function sendCommand(path,body,callback) {
         port:serverinfo.port,
         path: path,
         method: 'POST',
-        headers: {'Authorization': serverinfo.pass},
+        auth: "lambda:" + serverinfo.password
     };
 
-    var req = http.request(opt, function(res) {
+    var req = https.request(opt, function(res) {
         callback();
         res.setEncoding('utf8');
         res.on('data', function (chunk) {
@@ -74,145 +74,145 @@ AlexaRoku.prototype.intentHandlers = {
         sendCommand("/roku/rewind",null,function() {
             response.tellWithCard("Rewinding");
         });
-    
+
     },
     Fastforward: function (intent, session, response) {
         sendCommand("/roku/fastforward",null,function() {
             response.tellWithCard("Fast forwarding");
         });
-    
+
     },
     Instantreplay: function (intent, session, response) {
         sendCommand("/roku/instantreplay",null,function() {
             response.tellWithCard("Instant Replay");
         });
-    
+
     },
     Up: function (intent, session, response) {
         sendCommand("/roku/up",null,function() {
             response.tellWithCard("Up");
         });
-    
+
     },
     Uptwo: function (intent, session, response) {
         sendCommand("/roku/uptwo",null,function() {
             response.tellWithCard("Up Two");
         });
-    
+
     },
     Upthree: function (intent, session, response) {
         sendCommand("/roku/upthree",null,function() {
             response.tellWithCard("Up Three");
         });
-    
+
     },
     Upfour: function (intent, session, response) {
         sendCommand("/roku/upfour",null,function() {
             response.tellWithCard("Up Four");
         });
-    
+
     },
     Upfive: function (intent, session, response) {
         sendCommand("/roku/upfive",null,function() {
             response.tellWithCard("Up five");
         });
-    
+
     },
     Down: function (intent, session, response) {
         sendCommand("/roku/down",null,function() {
             response.tellWithCard("Down");
         });
-    
+
     },
     Downtwo: function (intent, session, response) {
         sendCommand("/roku/downtwo",null,function() {
             response.tellWithCard("Down Two");
         });
-    
+
     },
     Downthree: function (intent, session, response) {
         sendCommand("/roku/downthree",null,function() {
             response.tellWithCard("Down Three");
         });
-    
+
     },
     Downfour: function (intent, session, response) {
         sendCommand("/roku/downfour",null,function() {
             response.tellWithCard("Down Four");
         });
-        
+
     },
     Downfive: function (intent, session, response) {
         sendCommand("/roku/downfive",null,function() {
             response.tellWithCard("Down Five");
         });
-    
+
     },
     Power: function (intent, session, response) {
         sendCommand("/roku/power",null,function() {
             response.tellWithCard("Power");
         });
-    
+
     },
     Left: function (intent, session, response) {
         sendCommand("/roku/left",null,function() {
             response.tellWithCard("Left");
         });
-    
-    }, 
+
+    },
     Lefttwo: function (intent, session, response) {
         sendCommand("/roku/lefttwo",null,function() {
             response.tellWithCard("Left Two");
         });
-    
+
     },
     Leftthree: function (intent, session, response) {
         sendCommand("/roku/leftthree",null,function() {
             response.tellWithCard("Left Three");
         });
-    
+
     },
     Leftfour: function (intent, session, response) {
         sendCommand("/roku/leftfour",null,function() {
             response.tellWithCard("Left Four");
         });
-    
+
     },
     Leftfive: function (intent, session, response) {
         sendCommand("/roku/leftfive",null,function() {
             response.tellWithCard("Left Five");
         });
-    
+
     },
     Right: function (intent, session, response) {
         sendCommand("/roku/right",null,function() {
             response.tellWithCard("Right");
         });
-    
-    },   
+
+    },
     Righttwo: function (intent, session, response) {
         sendCommand("/roku/righttwo",null,function() {
             response.tellWithCard("Right Two");
         });
-    
+
     },
     Rightthree: function (intent, session, response) {
         sendCommand("/roku/rightthree",null,function() {
             response.tellWithCard("Right Three");
         });
-    
+
     },
     Rightfour: function (intent, session, response) {
         sendCommand("/roku/rightfour",null,function() {
             response.tellWithCard("Right Four");
         });
-    
+
     },
     Rightfive: function (intent, session, response) {
         sendCommand("/roku/rightfive",null,function() {
             response.tellWithCard("Right Five");
         });
-    
+
     },
     Type: function (intent, session, response) {
         sendCommand("/roku/type",intent.slots.Text.value,function() {
@@ -228,7 +228,7 @@ AlexaRoku.prototype.intentHandlers = {
         sendCommand("/roku/playlastyoutube",null,function() {
             response.tellWithCard("Playing Last Search on YouTube");
         });
-    
+
     },
     SearchRoku: function (intent, session, response) {
         sendCommand("/roku/searchroku",intent.slots.Text.value,function() {

@@ -5,6 +5,7 @@ var fs = require('fs');
 var urllib = require("url");
 var Client = require('node-ssdp').Client;
 var dgram = require('dgram');
+var auth = require('basic-auth');
 var ssdp = new Client();
 
 var keyDelay = 100; //typing delay in ms. If you have a faster roku, you can probably reduce this, slower ones may have to increase it.
@@ -12,7 +13,7 @@ var keyDelay = 100; //typing delay in ms. If you have a faster roku, you can pro
 //null will cause the server to discover the Roku on startup, hard coding a value will allow for faster startups
 // When manually setting this, include the protocol, port, and trailing slash eg:
 // exports.rokuAddress = "http://192.168.1.100:8060/";
-var rokuAddress = null;
+var rokuAddress = serverinfo.rokuAddress;
 
 //handle the ssdp response when the roku is found
 ssdp.on('response', function (headers, statusCode, rinfo) {
@@ -74,13 +75,13 @@ function postSequence(sequence,callback) {
 function createTypeSequence(text) {
     var sequence = [];
     for (i=0; i<text.length; i++) {
-        var c = text.charCodeAt(i); 
+        var c = text.charCodeAt(i);
         if (c == 32) {
             sequence.push(rokuAddress+"keypress/Lit_%20");
         } else if (c >= 97 && c <=122) {
             sequence.push(rokuAddress+"keypress/Lit_"+text.charAt(i));
         }
-        sequence.push(keyDelay);    
+        sequence.push(keyDelay);
     }
     return sequence;
 }
@@ -149,20 +150,20 @@ var handlers = {
         postSequence([
             rokuAddress+"keypress/info",    //this function only works with a Roku TV, as a regular roku's caption's sequence is based on the individual app.
             keyDelay,
-            rokuAddress+"keypress/down",    
+            rokuAddress+"keypress/down",
             keyDelay,
-            rokuAddress+"keypress/down",   
+            rokuAddress+"keypress/down",
             keyDelay,
-            rokuAddress+"keypress/down",    
+            rokuAddress+"keypress/down",
             keyDelay,
-            rokuAddress+"keypress/down",    
-            keyDelay,                           
-            rokuAddress+"keypress/down",    
-            keyDelay,                           
-            rokuAddress+"keypress/right",    
+            rokuAddress+"keypress/down",
+            keyDelay,
+            rokuAddress+"keypress/down",
+            keyDelay,
+            rokuAddress+"keypress/right",
             keyDelay,
             rokuAddress+"keypress/info",    //presses info a second time to exit menu
-            keyDelay,                           
+            keyDelay,
         ]);
         response.end("OK"); //we provide an OK response before the operation finishes so that our AWS Lambda service doesn't wait around through our delays
     },
@@ -170,32 +171,32 @@ var handlers = {
         postSequence([
             rokuAddress+"keypress/info",    //this function only works with a Roku TV, as a regular roku's caption's sequence is based on the individual app.
             keyDelay,
-            rokuAddress+"keypress/down",    
+            rokuAddress+"keypress/down",
             keyDelay,
-            rokuAddress+"keypress/down",   
+            rokuAddress+"keypress/down",
             keyDelay,
-            rokuAddress+"keypress/down",    
+            rokuAddress+"keypress/down",
             keyDelay,
-            rokuAddress+"keypress/down",    
-            keyDelay,                          
-            rokuAddress+"keypress/down",    
-            keyDelay,                           
-            rokuAddress+"keypress/left",    
-            keyDelay,          
+            rokuAddress+"keypress/down",
+            keyDelay,
+            rokuAddress+"keypress/down",
+            keyDelay,
+            rokuAddress+"keypress/left",
+            keyDelay,
             rokuAddress+"keypress/info",    //presses info a second time to exit menu
-            keyDelay,                 
+            keyDelay,
         ]);
         response.end("OK"); //we provide an OK response before the operation finishes so that our AWS Lambda service doesn't wait around through our delays
     },
     //This endpoint doenst perform any operations, but it allows an easy way for you to dictate typed text without having to use the on screen keyboard
     "/roku/type":function(request,response) {
         getRequestData(request,function(data) {
-            var text = data.replace().toLowerCase(); 
+            var text = data.replace().toLowerCase();
             var sequence = createTypeSequence(text);
             postSequence(sequence,function() {
 
             });
-            response.end("OK");    
+            response.end("OK");
         });
     },
     //Takes the POST data and uses it to search for a show and then immediate plays that show
@@ -246,7 +247,7 @@ var handlers = {
             var sequence = [].concat([            //If a TV show....will stop before selecting a channel (first choice is based on how many episodes avaialble, NOT based on cost - meaning manually choose - will also allow you to choose the specific season and episode manually using voice or remote)
                 rokuAddress+"keypress/home",    //wake roku
                 rokuAddress+"keypress/home",    //reset to home screen
-                2000,            
+                2000,
                 rokuAddress+"launch/"+rokuChannel['plex'],    //open plex
                 5000,
                 rokuAddress+"keypress/up",
@@ -301,51 +302,51 @@ var handlers = {
     },
     "/roku/playpause":function(request,response) {        //the play and pause buttons are the same and is called "Play"
         post(rokuAddress+"keypress/Play");
-        response.end("OK");    
+        response.end("OK");
     },
     "/roku/power":function(request,response) {        //Only for roku TV - can only turn TV OFF....not On, as once it is turned off, it will disable the network,
         post(rokuAddress+"keypress/Power");
-        response.end("OK");    
+        response.end("OK");
     },
     "/roku/rewind":function(request,response) {        //rewind
         post(rokuAddress+"keypress/rev");
-        response.end("OK");    
+        response.end("OK");
     },
     "/roku/fastforward":function(request,response) {    //fast forward
         post(rokuAddress+"keypress/fwd");
-        response.end("OK");    
+        response.end("OK");
     },
     "/roku/up":function(request,response) {            //up
         post(rokuAddress+"keypress/up");
-        response.end("OK");    
+        response.end("OK");
     },
     "/roku/down":function(request,response) {        //down
         post(rokuAddress+"keypress/down");
-        response.end("OK");    
+        response.end("OK");
     },
     "/roku/back":function(request,response) {        //back
         post(rokuAddress+"keypress/back");
-        response.end("OK");    
+        response.end("OK");
     },
     "/roku/left":function(request,response) {        //left
         post(rokuAddress+"keypress/left");
-        response.end("OK");    
+        response.end("OK");
     },
     "/roku/instantreplay":function(request,response) {    //instant replay, go back 10 secounds
         post(rokuAddress+"keypress/instantreplay");
-        response.end("OK");    
+        response.end("OK");
     },
     "/roku/right":function(request,response) {        //right
         post(rokuAddress+"keypress/right");
-        response.end("OK");    
+        response.end("OK");
     },
     "/roku/select":function(request,response) {        //select - this is often more useful than play/pause - same as OK on the remote
         post(rokuAddress+"keypress/select");
-        response.end("OK");    
+        response.end("OK");
     },
     "/roku/home":function(request,response) {
         post(rokuAddress+"keypress/home");
-        response.end("OK");    
+        response.end("OK");
     },
     "/roku/nextepisode":function(request,response) {    //NOT being utilized right now, needs tweaking
         postSequence([
@@ -406,8 +407,9 @@ var handlers = {
 
 //handles and incoming request by calling the appropriate handler based on the URL
 function handleRequest(request, response){
-    if (request.headers.authorization !== serverinfo.pass) {
-        console.log("Invalid authorization header");
+    var credentials = auth(request);
+    if (!credentials || credentials.name !== "lambda" || credentials.pass !== serverinfo.password)
+        console.log("Invalid authorization: " + JSON.stringify(credentials));
         response.end();
         return;
     }
@@ -429,6 +431,7 @@ var rokuSearchInterval = setInterval(searchForRoku,1000);
 searchForRoku();
 
 //start the tcp server
-http.createServer(handleRequest).listen(serverinfo.port,function(){
-    console.log("Server listening on port %s", serverinfo.port);
+http.createServer(handleRequest).listen("/tmp/node_roku.sock",function(){
+    fs.chmodSync("/tmp/node_roku.sock", "777");
+    console.log("Server listening");
 });
